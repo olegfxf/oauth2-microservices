@@ -50,7 +50,7 @@ Output - Resource
 # Authortication ImMemory
 
 По умолчанию oauth2 не включает в сервер авторизации поддержку ролей.
-Фильтр MyBasicAuthentificationFilter перехватывает JWT. PAYLOAD токена
+Так, фильтр MyBasicAuthentificationFilter перехватывает токен. PAYLOAD токена
 имеет вид:
 ```json
 {
@@ -66,8 +66,10 @@ Output - Resource
   "iat": 1696351620
 }
 ```
-Токен не содержит данные о ролях пользователя.
-Для поддержки ролей в публикации ....... рекомендуют использовать бин:
+Токен не содержит данные о ролях пользователя. Для поддержки ролей в публикации
+"Add Roles to JWT Issued by Spring Authorization Server"
+https://www.appsdeveloperblog.com/add-roles-to-jwt-issued-by-new-spring-authorization-server/
+рекомендуют использовать бин:
 ```java
     @Bean
     OAuth2TokenCustomizer<JwtEncodingContext> jwtCustomizer() {
@@ -83,7 +85,9 @@ Output - Resource
     }
 ```
 Конфигурация сервера ресурсов для поддержки авторизации по ролям изменяется.
-Добавляются JwtAuthenticationConverter и JwtRoleConverter. В классе 
+Согласно рекомендациям "Role-based Access Control in Spring Authorization Server"
+https://www.appsdeveloperblog.com/role-based-access-control-in-spring-authorization-server/
+добавляются JwtAuthenticationConverter и JwtRoleConverter. В классе 
 ResourceServerConfig изменяется securityFilterChain. Добавляется условие 
 доступа к ресурсу - .antMatchers("/resource/**").hasRole("USER").
 Только пользователь с ролью ROLE_USER имеет доступ к ресурсу "/resource".
@@ -129,7 +133,6 @@ public class ResourceServerConfig {
   "iat": 1696350567
 }
 ```
-
 Запуск и тестирование:\
 Откроем браузер и перейдем по ссылке 127.0.0.1:8080/resource. Порт в URL указываем
 принадлежащий Gateway серверу. После перехода по ссылке нас редиректит на форму
@@ -137,7 +140,7 @@ public class ResourceServerConfig {
 ```text
 Login: user
 Password: password
-Output - Resource
+Output - Hello from filter ... Resource
 
 Login: admin
 Password: password
@@ -146,7 +149,8 @@ Output - Доступ к 127.0.0.1 запрещен
 HTTP ERROR 403
 ```
 Пользователь user с ролью ROLE_USER прошел аутентификацию и авторизацию,
-получил доступ к ресурсу "/resource". Пользователь admin имеет роль
+получил доступ к ресурсу "/resource". Строка "Hello from filter ..." генерируется 
+фильтром MyBasicAuthentificationFilter, который перехватывает JWT. Пользователь admin имеет роль
 ROLE_ADMIN. Он прошел аутентификацию, но не прошел авторизацию.
 
 
