@@ -92,26 +92,14 @@ public class DefaultSecurityConfig {
 //    }
 
 // # 3 db + default schema, my datasource
-    @Bean
-    UserDetailsService userDetailsService(DataSource dataSource) {
-        return new JdbcUserDetailsManager(dataSource);
-    }
+//    @Bean
+//    UserDetailsService userDetailsService(DataSource dataSource) {
+//        return new JdbcUserDetailsManager(dataSource);
+//    }
 
 
 
-    @Bean
-    OAuth2TokenCustomizer<JwtEncodingContext> jwtCustomizer() {
-        return context -> {
-            if (context.getTokenType() == OAuth2TokenType.ACCESS_TOKEN) {
-                Authentication principal = context.getPrincipal();
-                Set<String> authorities = principal.getAuthorities().stream()
-                        .map(GrantedAuthority::getAuthority)
-                        .collect(Collectors.toSet());
-                context.getClaims().claim("roles", authorities);
-            }
-        };
-    }
-
+// # 4 db + arbitrary scheme, my datasource
     private final UserDetailsServiceImpl userDetailsService;
 
     @Autowired
@@ -127,5 +115,20 @@ public class DefaultSecurityConfig {
         //   authenticationProvider.setPasswordEncoder(passwordEncoder());
         return authenticationProvider;
     }
+
+
+    @Bean
+    OAuth2TokenCustomizer<JwtEncodingContext> jwtCustomizer() {
+        return context -> {
+            if (context.getTokenType() == OAuth2TokenType.ACCESS_TOKEN) {
+                Authentication principal = context.getPrincipal();
+                Set<String> authorities = principal.getAuthorities().stream()
+                        .map(GrantedAuthority::getAuthority)
+                        .collect(Collectors.toSet());
+                context.getClaims().claim("roles", authorities);
+            }
+        };
+    }
+
 
 }

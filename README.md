@@ -280,5 +280,5 @@ ROLE_ADMIN. Он прошел аутентификацию, но не проше
 
 
 
-
+# JDBC authorization for microservices with  arbitrary scheme 
 
