@@ -230,4 +230,27 @@ ROLE_ADMIN. Он прошел аутентификацию, но не проше
 
 
 
+# JDBC authorization for microservices with Default Schema via schema.sql
+Дефолтовую схему БД продублируем в файле schema.sql. Это позволит нам управлять аккаунтами 
+пользователей из внешних источников, например, из файла data.sql.
+Для сервера авторизации в бин defaultSecurityFilterChain класса DefaultSecurityConfig добавляем
+authenticationProvider(authenticationProvider()) и получаем:
+```java
+    @Bean
+    SecurityFilterChain defaultSecurityFilterChain(HttpSecurity http) throws Exception {
+        http
+                .authorizeRequests(authorizeRequests ->
+                        authorizeRequests
+                                .anyRequest()
+                                .authenticated()
+                                .and()
+                                .authenticationProvider(authenticationProvider())
+                )
+                .formLogin(withDefaults());
+        return http.build();
+    }
+```
+
+
+
 

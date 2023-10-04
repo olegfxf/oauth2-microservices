@@ -1,0 +1,18 @@
+DROP TABLE IF EXISTS roles;
+DROP TABLE IF EXISTS users;
+
+CREATE TABLE IF NOT EXISTS users (
+    id LONG NOT NULL AUTO_INCREMENT,
+    username VARCHAR(100) NOT NULL,
+    password VARCHAR(159) NOT NULL,
+    enabled boolean NOT NULL,
+    PRIMARY KEY (id)
+);
+
+CREATE TABLE IF NOT EXISTS roles (
+    id LONG NOT NULL,
+    role VARCHAR(200) DEFAULT NULL,
+    FOREIGN KEY (id) REFERENCES users (id)
+);
+
+
