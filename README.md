@@ -7,17 +7,17 @@
 ```java
     UserDetailsService users() {
         UserDetails user1 = User.withDefaultPasswordEncoder()
-                .username("admin")
-                .password("password")
-                .roles("ADMIN")
-                .build();
+        .username("admin")
+        .password("password")
+        .roles("ADMIN")
+        .build();
         UserDetails user2 = User.withDefaultPasswordEncoder()
-                .username("user")
-                .password("password")
-                .roles("USER")
-                .build();
+        .username("user")
+        .password("password")
+        .roles("USER")
+        .build();
         return new InMemoryUserDetailsManager(user1, user2);
-    }
+        }
 ```
 Контроллер в проекте один. Код контроллера:
 ```java
@@ -44,4 +44,6 @@ Password: password
 Output - Resource
 ```
 Для пользователей user и admin ресурс "/resource" одинаково доступен, как и следовало ожидать,
-так как авторизация не настроена.  
+так как авторизация не настроена. При успешном подключении к приложению формируется JWT. За время
+действия JWT он не позволит подключится под другим логином. Для входа под другим логином требуется
+перегрузить приложение.
