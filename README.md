@@ -156,7 +156,7 @@ ROLE_ADMIN. Он прошел аутентификацию, но не проше
 
 
 
-# JDBC authorization for microservices with Default Schema (Script)
+# JDBC authorization for microservices with Default Schema via script
 Для тестирования работы Spring Security с БД можно следовать рекомендациям
 <br> [JDBC Authentication](https://docs.spring.io/spring-security/reference/servlet/authentication/passwords/jdbc.html)
 и использовать Default Schema на основе скрипта. DataSource задается бином:
@@ -223,7 +223,10 @@ HTTP ERROR 403
 получил доступ к ресурсу "/resource". Пользователь admin имеет роль
 ROLE_ADMIN. Он прошел аутентификацию, но не прошел авторизацию. При успешном подключении
 к приложению формируется JWT. За время действия JWT он не позволит подключится под другим
-логином. Для входа под другим логином требуется перегрузить приложение.
+логином. Для входа под другим логином требуется перегрузить приложение.\
+Достоинством работы со схемой БД по умолчанию через скрипт является простота реализации.
+Недостаток заключается в сложном управлении аккаунтами пользователей. Ее лучше применять
+в тестовых целях.
 
 
 
