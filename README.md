@@ -231,28 +231,15 @@ ROLE_ADMIN. Он прошел аутентификацию, но не проше
 
 
 # JDBC authorization for microservices with Default Schema via schema.sql
-Дефаултовую схему БД продублируем в файле schema.sql. Это позволит нам управлять аккаунтами 
-пользователей из внешних источников, например, из файла data.sql. Для сервера авторизации
-в бин defaultSecurityFilterChain класса DefaultSecurityConfig добавляем
-authenticationProvider(authenticationProvider()) и получаем:
+Дефаултовую схему БД продублируем в файле schema.sql. Это позволит нам управлять аккаунтами
+пользователей из внешних источников, например, из файла data.sql. Инициируем источник данных
+через бин:
 ```java
     @Bean
-    SecurityFilterChain defaultSecurityFilterChain(HttpSecurity http) throws Exception {
-        http
-                .authorizeRequests(authorizeRequests ->
-                        authorizeRequests
-                                .anyRequest()
-                                .authenticated()
-                                .and()
-                                .authenticationProvider(authenticationProvider())
-                )
-                .formLogin(withDefaults());
-        return http.build();
+    UserDetailsService userDetailsService(DataSource dataSource) {
+        return new JdbcUserDetailsManager(dataSource);
     }
 ```
-AuthenticationProvider на основании данных из http-запроса получает данные о пользователе
-предоставляемые UserDetailsService. UserDetailsService, в свою очередь, получает информацию
-о пользователе из БД через репозиторий пользователя.\
 Запуск и тестирование:\
 Откроем браузер и перейдем по ссылке 127.0.0.1:8080/resource. Порт в URL указываем
 принадлежащий Gateway серверу. После перехода по ссылке нас редиректит на форму
@@ -275,7 +262,7 @@ ROLE_ADMIN. Он прошел аутентификацию, но не проше
 логином. Для входа под другим логином требуется перегрузить приложение.\
 Достоинством работы со схемой БД получаемой из файла schema.sql является возможность управлять
 аккаунтами пользователей из внешних источников, таких как data.sql. Недостатком данного подхода
-являются ограничения накладываемые на схему БД. Она должна точно соответствовать дефаултовой 
+являются ограничения накладываемые на схему БД. Она должна точно соответствовать дефаултовой
 схеме БД.
 
 
