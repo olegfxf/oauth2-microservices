@@ -1,7 +1,7 @@
 package com.example.authorizationserver.config;
 
-import com.example.authorizationserver.repository.UserRepository;
-import com.example.authorizationserver.service.UserDetailsServiceImpl;
+//import com.example.authorizationserver.repository.UserRepository;
+//import com.example.authorizationserver.service.UserDetailsServiceImpl;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
@@ -41,8 +41,8 @@ public class DefaultSecurityConfig {
                         authorizeRequests
                                 .anyRequest()
                                 .authenticated()
-                                .and()
-                                .authenticationProvider(authenticationProvider())
+  //                              .and()
+    //                            .authenticationProvider(authenticationProvider())
                 )
                 .formLogin(withDefaults());
         return http.build();
