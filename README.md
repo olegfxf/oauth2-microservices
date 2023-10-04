@@ -1,6 +1,6 @@
 # oauth2-microservices
 
-# Authentication ImMemory
+# InMemory authentication for microservices
 В проекте исследуется работа oauth2 в микросервисной архитектуре.
 Исходный текст проекта взят из статьи https://habr.com/ru/articles/701912/. UserDetailsService
 определен в проекте как:
@@ -47,10 +47,9 @@ Output - Resource
 так как авторизация не настроена.
 
 
-# Authortication ImMemory
-
-По умолчанию oauth2 не включает в сервер авторизации поддержку ролей.
-Так, фильтр MyBasicAuthentificationFilter перехватывает токен. PAYLOAD токена
+# InMemory authorization for microservices
+По умолчанию oauth2 не включает в сервер авторизации поддержку ролей. Это можно проверить
+перехватив JWT. Так фильтр MyBasicAuthentificationFilter перехватывает токен и PAYLOAD токена
 имеет вид:
 ```json
 {
@@ -140,7 +139,7 @@ public class ResourceServerConfig {
 ```text
 Login: user
 Password: password
-Output - Hello from filter ... Resource
+Output - Resource
 
 Login: admin
 Password: password
@@ -149,8 +148,7 @@ Output - Доступ к 127.0.0.1 запрещен
 HTTP ERROR 403
 ```
 Пользователь user с ролью ROLE_USER прошел аутентификацию и авторизацию,
-получил доступ к ресурсу "/resource". Строка "Hello from filter ..." генерируется 
-фильтром MyBasicAuthentificationFilter, который перехватывает JWT. Пользователь admin имеет роль
+получил доступ к ресурсу "/resource". Пользователь admin имеет роль
 ROLE_ADMIN. Он прошел аутентификацию, но не прошел авторизацию.
 
 
