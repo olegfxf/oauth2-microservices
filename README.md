@@ -230,4 +230,55 @@ ROLE_ADMIN. Он прошел аутентификацию, но не проше
 
 
 
+# JDBC authorization for microservices with Default Schema via schema.sql
+Дефаултовую схему БД продублируем в файле schema.sql. Это позволит нам управлять аккаунтами 
+пользователей из внешних источников, например, из файла data.sql. Для сервера авторизации
+в бин defaultSecurityFilterChain класса DefaultSecurityConfig добавляем
+authenticationProvider(authenticationProvider()) и получаем:
+```java
+    @Bean
+    SecurityFilterChain defaultSecurityFilterChain(HttpSecurity http) throws Exception {
+        http
+                .authorizeRequests(authorizeRequests ->
+                        authorizeRequests
+                                .anyRequest()
+                                .authenticated()
+                                .and()
+                                .authenticationProvider(authenticationProvider())
+                )
+                .formLogin(withDefaults());
+        return http.build();
+    }
+```
+AuthenticationProvider на основании данных из http-запроса получает данные о пользователе
+предоставляемые UserDetailsService. UserDetailsService, в свою очередь, получает информацию
+о пользователе из БД через репозиторий пользователя.\
+Запуск и тестирование:\
+Откроем браузер и перейдем по ссылке 127.0.0.1:8080/resource. Порт в URL указываем
+принадлежащий Gateway серверу. После перехода по ссылке нас редиректит на форму
+ввода логина и пароля:
+```text
+Login: user
+Password: password
+Output - Resource
+
+Login: admin
+Password: password
+Output - Доступ к 127.0.0.1 запрещен
+У вас нет прав для просмотра этой страницы.
+HTTP ERROR 403
+```
+Пользователь user с ролью ROLE_USER прошел аутентификацию и авторизацию,
+получил доступ к ресурсу "/resource". Пользователь admin имеет роль
+ROLE_ADMIN. Он прошел аутентификацию, но не прошел авторизацию. При успешном подключении
+к приложению формируется JWT. За время действия JWT он не позволит подключится под другим
+логином. Для входа под другим логином требуется перегрузить приложение.\
+Достоинством работы со схемой БД получаемой из файла schema.sql является возможность управлять
+аккаунтами пользователей из внешних источников, таких как data.sql. Недостатком данного подхода
+являются ограничения накладываемые на схему БД. Она должна точно соответствовать дефаултовой 
+схеме БД.
+
+
+
+
 
