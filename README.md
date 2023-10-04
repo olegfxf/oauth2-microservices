@@ -1,5 +1,6 @@
 # oauth2-microservices
 
+# InMemory authentication for microservices
 В проекте исследуется работа oauth2 в микросервисной архитектуре.
 Исходный текст проекта взят из статьи https://habr.com/ru/articles/701912/. UserDetailsService
 определен в проекте как:
