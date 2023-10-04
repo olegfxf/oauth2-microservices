@@ -2,7 +2,7 @@
 
 # InMemory authentication for microservices
 В проекте исследуется работа oauth2 в микросервисной архитектуре.
-Исходный текст проекта взят из статьи https://habr.com/ru/articles/701912/. UserDetailsService
+Исходный текст проекта взят из статьи <br> [Security микросервисов с помощью Spring Cloud Gateway и TokenReley](https://habr.com/ru/articles/701912/) UserDetailsService
 определен в проекте как:
 ```java
     UserDetailsService users() {
@@ -68,8 +68,7 @@ Output - Resource
 }
 ```
 Токен не содержит данные о ролях пользователя. Для поддержки ролей в публикации
-"Add Roles to JWT Issued by Spring Authorization Server"
-https://www.appsdeveloperblog.com/add-roles-to-jwt-issued-by-new-spring-authorization-server/
+<br> [Add Roles to JWT Issued by Spring Authorization Serve](https://www.appsdeveloperblog.com/add-roles-to-jwt-issued-by-new-spring-authorization-server/)
 рекомендуют использовать бин:
 ```java
     @Bean
@@ -86,8 +85,8 @@ https://www.appsdeveloperblog.com/add-roles-to-jwt-issued-by-new-spring-authoriz
     }
 ```
 Конфигурация сервера ресурсов для поддержки авторизации по ролям изменяется.
-Согласно рекомендациям "Role-based Access Control in Spring Authorization Server"
-https://www.appsdeveloperblog.com/role-based-access-control-in-spring-authorization-server/
+Согласно рекомендациям 
+<br> [Role-based Access Control in Spring Authorization Server](https://www.appsdeveloperblog.com/role-based-access-control-in-spring-authorization-server/)
 добавляются JwtAuthenticationConverter и JwtRoleConverter. В классе 
 ResourceServerConfig изменяется securityFilterChain. Добавляется условие 
 доступа к ресурсу - .antMatchers("/resource/**").hasRole("USER").
@@ -154,6 +153,78 @@ HTTP ERROR 403
 ROLE_ADMIN. Он прошел аутентификацию, но не прошел авторизацию. При успешном подключении 
 к приложению формируется JWT. За время действия JWT он не позволит подключится под другим
 логином. Для входа под другим логином требуется перегрузить приложение.
+
+
+
+# JDBC authorization for microservices with Default Schema (Script)
+Для тестирования работы Spring Security с БД можно следовать рекомендациям
+<br> [JDBC Authentication](https://docs.spring.io/spring-security/reference/servlet/authentication/passwords/jdbc.html)
+и использовать Default Schema на основе скрипта. DataSource задается бином:
+```java
+@Bean
+DataSource dataSource() {
+	return new EmbeddedDatabaseBuilder()
+		.setType(H2)
+		.addScript(JdbcDaoImpl.DEFAULT_USER_SCHEMA_DDL_LOCATION)
+		.build();
+}
+```
+Скрипт, представлен как ресурс с путем
+org/springframework/security/core/userdetails/jdbc/users.ddl. Он формирует
+схему БД по умолчанию. UserDetailsManager приобретает вид:
+```java
+    @Bean
+    UserDetailsManager users(DataSource dataSource) {
+        UserDetails user = User.withDefaultPasswordEncoder()
+                .username("user")
+                .password("password")
+                .roles("USER")
+                .build();
+        UserDetails admin = User.withDefaultPasswordEncoder()
+                .username("admin")
+                .password("password")
+                .roles("ADMIN")
+                .build();
+        JdbcUserDetailsManager users = new JdbcUserDetailsManager(dataSource);
+        users.createUser(user);
+        users.createUser(admin);
+        return users;
+    }
+```
+В pom.xml добавляются зависимости:
+```xml
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-data-jpa</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.h2database</groupId>
+            <artifactId>h2</artifactId>
+            <scope>runtime</scope>
+            <version>1.4.199</version>
+        </dependency>
+```
+Запуск и тестирование:\
+Откроем браузер и перейдем по ссылке 127.0.0.1:8080/resource. Порт в URL указываем
+принадлежащий Gateway серверу. После перехода по ссылке нас редиректит на форму
+ввода логина и пароля:
+```text
+Login: user
+Password: password
+Output - Resource
+
+Login: admin
+Password: password
+Output - Доступ к 127.0.0.1 запрещен
+У вас нет прав для просмотра этой страницы.
+HTTP ERROR 403
+```
+Пользователь user с ролью ROLE_USER прошел аутентификацию и авторизацию,
+получил доступ к ресурсу "/resource". Пользователь admin имеет роль
+ROLE_ADMIN. Он прошел аутентификацию, но не прошел авторизацию. При успешном подключении
+к приложению формируется JWT. За время действия JWT он не позволит подключится под другим
+логином. Для входа под другим логином требуется перегрузить приложение.
+
 
 
 
