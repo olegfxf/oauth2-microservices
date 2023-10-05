@@ -231,15 +231,16 @@ ROLE_ADMIN. Он прошел аутентификацию, но не проше
 
 
 # JDBC authorization for microservices with Default Schema via schema.sql
-Дефаултовую схему БД продублируем в файле schema.sql. Это позволит нам управлять аккаунтами 
-пользователей из внешних источников, например, из файла data.sql. Инициируем источник данных
-через бин:
+Схему БД по умолчанию, предлагаемую Spring Security, продублируем в файле schema.sql.
+Это позволит нам управлять аккаунтами пользователей из внешних источников, например,
+из файла data.sql. Инициируем источник данных через бин:
 ```java
     @Bean
     UserDetailsService userDetailsService(DataSource dataSource) {
         return new JdbcUserDetailsManager(dataSource);
     }
 ```
+Источник данных берется из файла application.properties
 Запуск и тестирование:\
 Откроем браузер и перейдем по ссылке 127.0.0.1:8080/resource. Порт в URL указываем
 принадлежащий Gateway серверу. После перехода по ссылке нас редиректит на форму
