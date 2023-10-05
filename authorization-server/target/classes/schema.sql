@@ -12,10 +12,5 @@ CREATE TABLE authorities (
     authority VARCHAR(200) NOT NULL
 );
 
---CREATE TABLE IF NOT EXISTS roles (
---    id LONG NOT NULL,
---    role VARCHAR(200) DEFAULT NULL,
---    FOREIGN KEY (id) REFERENCES users (id)
---);
 
 
