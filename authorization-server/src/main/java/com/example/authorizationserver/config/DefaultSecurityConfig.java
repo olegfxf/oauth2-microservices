@@ -112,20 +112,5 @@ public class DefaultSecurityConfig {
         };
     }
 
-//    private final UserDetailsServiceImpl userDetailsService;
-//
-//    @Autowired
-//    public DefaultSecurityConfig(UserDetailsServiceImpl userDetailsService) {
-//        this.userDetailsService = userDetailsService;
-//    }
-//
-//    @Bean
-//    public AuthenticationProvider authenticationProvider() {
-//        System.out.println("provider");
-//        DaoAuthenticationProvider authenticationProvider = new DaoAuthenticationProvider();
-//        authenticationProvider.setUserDetailsService(userDetailsService);
-//        //   authenticationProvider.setPasswordEncoder(passwordEncoder());
-//        return authenticationProvider;
-//    }
 
 }
